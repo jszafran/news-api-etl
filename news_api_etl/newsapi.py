@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import requests
+from requests.adapters import HTTPAdapter, Retry
 
 from news_api_etl.models import NewsSource, SourceTopHeadline
 
@@ -14,6 +15,14 @@ class NewsApiHTTPClient:
         self._api_url = api_url
         self._session = requests.Session()
         self._session.headers.update({"X-Api-Key": api_key})
+        retry_strategy = Retry(
+            total=5,
+            backoff_factor=0.3,
+            status_forcelist=(500, 502, 503, 504),
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self._session.mount("http://", adapter)
+        self._session.mount("https://", adapter)
 
     def _get(self, url):
         return self._session.get(self._api_url + url, timeout=5)
@@ -45,6 +54,10 @@ class NewsApiHTTPClient:
 
 
 class InMemoryNewsApiClient:
+    """
+    Helper class used in tests.
+    """
+
     def __init__(
         self, sources: List[NewsSource], top_headlines: List[SourceTopHeadline]
     ) -> None:
