@@ -25,7 +25,7 @@ class NewsApiHTTPClient:
         self._session.mount("https://", adapter)
 
     def _get(self, url):
-        return self._session.get(self._api_url + url, timeout=5)
+        return self._session.get(self._api_url + url, timeout=10)
 
     def get_sources(self, language: Optional[str] = None) -> List[NewsSource]:
         endpoint_url = "sources"
