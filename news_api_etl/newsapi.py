@@ -1,27 +1,8 @@
-from dataclasses import dataclass
-from typing import Iterable, List, Optional, Protocol
+from typing import List, Optional
 
 import requests
 
-
-@dataclass
-class NewsSource:
-    id: str
-    name: str
-
-
-@dataclass
-class TopHeadline:
-    headline: str
-    source_id: str
-
-
-class NewsApiClient(Protocol):
-    def get_sources(self, language: Optional[str] = None) -> List[NewsSource]:
-        pass
-
-    def get_top_headlines(self, sources: Optional[Iterable[NewsSource]] = None):
-        pass
+from news_api_etl.models import NewsSource, SourceTopHeadline
 
 
 class NewsApiHTTPClient:
@@ -44,15 +25,16 @@ class NewsApiHTTPClient:
             for source in response.json()["sources"]
         ]
 
-    def get_top_headlines(self, sources: List[NewsSource]) -> List[TopHeadline]:
+    def get_top_headlines(self, sources: List[NewsSource]) -> List[SourceTopHeadline]:
         sources_ids = ",".join(s.id for s in sources)
         endpoint_url = f"top-headlines/?sources={sources_ids}"
         response = self._get(endpoint_url)
         response.raise_for_status()
         top_headlines = response.json()["articles"]
-        return [
-            TopHeadline(
-                headline=top_headline["title"], source_id=top_headline["source"]["id"]
+        source_top_headlines = [
+            SourceTopHeadline(
+                title=top_headline["title"], source_id=top_headline["source"]["id"]
             )
             for top_headline in top_headlines
         ]
+        return source_top_headlines
