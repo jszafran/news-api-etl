@@ -1,7 +1,6 @@
 import csv
 import io
 import logging
-import os
 import pathlib
 from typing import List
 
@@ -41,17 +40,19 @@ class LocalDiskCSVLoader:
             source_dir = self._root_path / source_headlines.source_id
             source_dir.mkdir(exist_ok=True)
             csv_path = source_dir / f"{timestamp}_headlines.csv"
-            with open(str(csv_path.absolute()), "wt", encoding="utf-8") as f:
+            abs_path = str(csv_path.absolute())
+            with open(abs_path, "wt", encoding="utf-8") as f:
                 f.write(create_csv_text(source_headlines))
+            logging.info(f"{abs_path} loaded successfully.")
         logging.info("Loading done.")
 
 
 class S3CSVLoader:
     def __init__(
         self,
-        bucket_name: str = os.getenv("BUCKET_NAME"),
-        aws_access_key_id: str = os.getenv("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key: str = os.getenv("AWS_SECRET_ACCESS_KEY"),
+        bucket_name: str,
+        aws_access_key_id: str,
+        aws_secret_access_key: str,
     ) -> None:
         self._bucket_name = bucket_name
         self._aws_access_key_id = aws_access_key_id
@@ -71,4 +72,5 @@ class S3CSVLoader:
                 Bucket=self._bucket_name,
                 Key=key,
             )
+            logging.info(f"s3://{self._bucket_name}/{key} loaded successfully.")
         logging.info("Loading done.")
