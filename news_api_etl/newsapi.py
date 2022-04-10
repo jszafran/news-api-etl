@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 
 import requests
@@ -6,7 +7,11 @@ from news_api_etl.models import NewsSource, SourceTopHeadline
 
 
 class NewsApiHTTPClient:
-    def __init__(self, api_key: str, api_url: str = "https://newsapi.org/v2/") -> None:
+    def __init__(
+        self,
+        api_key: str = os.getenv("NEWS_API_KEY"),
+        api_url: str = "https://newsapi.org/v2/",
+    ) -> None:
         self._api_url = api_url
         self._session = requests.Session()
         self._session.headers.update({"X-Api-Key": api_key})
