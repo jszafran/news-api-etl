@@ -11,7 +11,7 @@ from news_api_etl.models import (
 )
 
 
-class NewsApiETL:
+class NewsApiETLPipeline:
     def __init__(self, news_api_client: NewsApiClient, data_loader: DataLoader):
         self._news_api_client = news_api_client
         self._data_loader = data_loader
@@ -34,9 +34,7 @@ class NewsApiETL:
         logging.info("Transforming data (aggregate top headlines by source name)")
         source_aggregated_top_headlines = defaultdict(list)
         for top_headline in top_headlines:
-            source_aggregated_top_headlines[top_headline.source_id].append(
-                top_headline.title
-            )
+            source_aggregated_top_headlines[top_headline.source_id].append(top_headline)
         logging.info("Transformation done.")
         return [
             SourceAggregatedTopHeadlines(

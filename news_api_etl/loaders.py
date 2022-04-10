@@ -16,10 +16,10 @@ def create_csv_text(
 ) -> str:
     header = (header,)
     buffer = io.StringIO()
-    writer = csv.writer(buffer)
+    writer = csv.writer(buffer, quoting=csv.QUOTE_MINIMAL)
     writer.writerow(header)
     writer.writerows(
-        (headline,) for headline in source_aggregated_top_headlines.top_headlines
+        (headline.title,) for headline in source_aggregated_top_headlines.top_headlines
     )
     return buffer.getvalue()
 

@@ -38,3 +38,17 @@ class NewsApiHTTPClient:
             for top_headline in top_headlines
         ]
         return source_top_headlines
+
+
+class InMemoryNewsApiClient:
+    def __init__(
+        self, sources: List[NewsSource], top_headlines: List[SourceTopHeadline]
+    ) -> None:
+        self._sources = sources
+        self._top_headlines = top_headlines
+
+    def get_sources(self, language: Optional[str] = None) -> List[NewsSource]:
+        return self._sources
+
+    def get_top_headlines(self, sources: List[NewsSource]) -> List[SourceTopHeadline]:
+        return self._top_headlines
