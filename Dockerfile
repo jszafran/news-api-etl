@@ -9,6 +9,4 @@ COPY requirements.txt /requirements.txt
 
 RUN pip install -r /requirements.txt
 
-COPY .env main.py ./
-COPY news_api_etl ./news_api_etl
-COPY tests ./tests
+COPY . .
